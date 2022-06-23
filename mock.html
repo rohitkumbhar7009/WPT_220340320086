@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+
+<body>
+    <input type="text" name="bookid" id="bookid" placeholder="Book id">
+    <span id="msg"></span><br>
+    <input type="text" name="bookname" id="bookname" placeholder="Book Name"><br>
+    <input type="text" name="price" id="price" placeholder="Book Price"><br>
+    <button id="update">Update</button>
+    <hr>
+    <span id="display"></span>
+</body>
+<script src="jquery-3.5.1.min.js"></script>
+
+
+<script>
+        $(()=>{
+            console.log("documemt loaded");
+
+            $('#bookid').blur(() => {
+                console.log("blur event");
+
+                let input = { bookid: $('#bookid').val() }
+                let ajaxparameters = {
+                    data: input,
+                    url: "http://localhost:3000/getdetails",
+                    type: 'get',
+                    dataType: 'json',
+                    success: (datafromserver) => {
+                        if (datafromserver === true) {
+                            console.log("data fetched succesfull");
+
+                            $('#bookname').val(datafromserver.bookdetails.bookname);
+                            $('#price').val(datafromserver.bookdetails.price);
+                            $('#msg').text("Book detalis found");
+                            $('#update').prop('disable', false)
+                        }
+                        else {
+                            $('#bookname').val("");
+                            $('#price').val("");
+                            $('#msg').text("Book details not found");
+                            $('#update').prop("disable", true);
+                        }
+                    },
+                    error: (errorfromserver) => {
+                        console.log("Error occur");
+                    }
+                }
+                $.ajax(ajaxparameters);
+            });
+
+            $('#update').click(() => {
+                console.log("Update clicked");
+
+
+                let input = { bookid: $('#bookid').val(), bookname: $('#bookname').val(), price: $('#price').val() }
+                let ajaxparameters = {
+                    data: input,
+                    url: "http://localhost:3000/update",
+                    type: 'get',
+                    dataType: 'json',
+                    success: (datafromserver) => {
+                        if (datafromserver.status === true) {
+                            console.log("update succesfull");
+                            $('#msg').text("update succesfull");
+                        }
+                        else {
+                            console.log("Upadte unsuccesfull");
+                            $('#msg').text("Update unsuccefull");
+                        }
+                    },
+                    error: (errorfromserver) => {
+                        console.log("Error occur");
+                        $('#msg').text("Error occur");
+                    }
+
+                }
+                $.ajax(ajaxparameters);
+
+            });
+        });
+ </script>
+
+</html>
